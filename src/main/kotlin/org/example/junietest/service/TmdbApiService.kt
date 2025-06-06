@@ -364,45 +364,6 @@ class TmdbApiService(
     }
 
     /**
-     * Fetches streaming providers for a movie.
-     *
-     * @param movieId The ID of the movie
-     * @return A Mono emitting a list of streaming services
-     */
-    private fun getStreamingProviders(movieId: Long): Mono<List<StreamingService>> {
-        // If the API key is not set, return an empty list
-        if (tmdbConfig.getApiKey() == "YOUR_TMDB_API_KEY") {
-            return Mono.just(emptyList())
-        }
-
-        return webClient.get()
-            .uri { uriBuilder -> buildUri(uriBuilder, "/movie/$movieId/watch/providers", emptyMap()) }
-            .retrieve()
-            .bodyToMono(WatchProvidersResponse::class.java)
-            .map { response ->
-                // Get US providers if available, otherwise use the first country's providers
-                val countryProviders = response.results["US"] ?: response.results.values.firstOrNull()
-
-                // Combine all types of providers (flatrate, rent, buy)
-                val allProviders = mutableListOf<Provider>()
-                countryProviders?.flatrate?.let { allProviders.addAll(it) }
-                countryProviders?.rent?.let { allProviders.addAll(it) }
-                countryProviders?.buy?.let { allProviders.addAll(it) }
-
-                // Convert to StreamingService objects and remove duplicates
-                allProviders.distinctBy { it.providerId }
-                    .map { provider ->
-                        StreamingService(
-                            providerId = provider.providerId,
-                            providerName = provider.providerName,
-                            logoPath = provider.logoPath
-                        )
-                    }
-            }
-            .onErrorReturn(emptyList())
-    }
-
-    /**
      * Enriches a list of movie DTOs with additional details like genres and director.
      *
      * @param movieDtos The list of movie DTOs to enrich
@@ -557,32 +518,6 @@ class TmdbApiService(
         val id: Long,
         val cast: List<Cast>,
         val crew: List<Crew>
-    )
-
-    /**
-     * Response wrapper for movie watch providers from TMDB API.
-     */
-    data class WatchProvidersResponse(
-        val id: Long,
-        val results: Map<String, CountryProviders>
-    )
-
-    /**
-     * Providers for a specific country from TMDB API.
-     */
-    data class CountryProviders(
-        val flatrate: List<Provider>? = null,
-        val rent: List<Provider>? = null,
-        val buy: List<Provider>? = null
-    )
-
-    /**
-     * Provider details from TMDB API.
-     */
-    data class Provider(
-        @JsonProperty("provider_id") val providerId: Long,
-        @JsonProperty("provider_name") val providerName: String,
-        @JsonProperty("logo_path") val logoPath: String? = null
     )
 
     /**

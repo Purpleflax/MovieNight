@@ -138,15 +138,16 @@ const WheelContainer = styled.div`
   align-items: center;
 
   &::before {
-    content: '🎬';
+    content: '';
     position: absolute;
-    top: -35px;
+    top: -5px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 2.5rem;
+    width: 50px;
+    height: 5px;
+    background: linear-gradient(90deg, transparent, #e50914, transparent);
+    border-radius: 5px;
     z-index: 10;
-    filter: drop-shadow(0 0 10px rgba(229, 9, 20, 0.7));
-    animation: ${bounce} 2s ease infinite;
   }
 `;
 
@@ -238,7 +239,6 @@ const Message = styled.div`
   font-weight: 500;
   font-family: 'Roboto', sans-serif;
   text-shadow: 0 0 10px rgba(245, 181, 12, 0.7);
-  animation: ${bounce} 2s ease infinite;
   padding: 15px 25px;
   background-color: rgba(0, 0, 0, 0.4);
   border-radius: 12px;
@@ -246,6 +246,11 @@ const Message = styled.div`
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   max-width: 90%;
   letter-spacing: 0.5px;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
 `;
 
 const ErrorMessage = styled.div`

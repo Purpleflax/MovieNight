@@ -81,14 +81,14 @@ const Header = styled.header`
   padding: 25px 30px;
 
   &::after {
-    content: '🍿';
+    content: '';
     position: absolute;
-    right: 30px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 2.5rem;
-    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
-    animation: ${bounce} 3s ease infinite;
+    right: 0;
+    top: 0;
+    width: 100px;
+    height: 100%;
+    background: linear-gradient(to left, rgba(229, 9, 20, 0.1), transparent);
+    border-radius: 0 10px 10px 0;
   }
 `;
 
