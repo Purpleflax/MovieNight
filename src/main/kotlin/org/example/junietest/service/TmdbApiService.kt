@@ -336,22 +336,45 @@ class TmdbApiService(
             return Mono.just(emptyList())
         }
 
+        logger.info("Fetching streaming providers for movie ID: $movieId")
+
         return webClient.get()
             .uri { uriBuilder -> buildUri(uriBuilder, "/movie/$movieId/watch/providers", emptyMap()) }
             .retrieve()
             .bodyToMono(WatchProvidersResponse::class.java)
             .map { response ->
+                logger.info("Received watch providers response for movie ID: $movieId")
+
                 // Get US providers if available, otherwise use the first country's providers
                 val countryProviders = response.results["US"] ?: response.results.values.firstOrNull()
 
+                if (countryProviders == null) {
+                    logger.warn("No streaming providers found for movie ID: $movieId")
+                    return@map emptyList<StreamingService>()
+                }
+
                 // Combine all types of providers (flatrate, rent, buy)
                 val allProviders = mutableListOf<Provider>()
-                countryProviders?.flatrate?.let { allProviders.addAll(it) }
-                countryProviders?.rent?.let { allProviders.addAll(it) }
-                countryProviders?.buy?.let { allProviders.addAll(it) }
+                countryProviders.flatrate?.let { 
+                    logger.info("Found ${it.size} flatrate providers for movie ID: $movieId")
+                    allProviders.addAll(it) 
+                }
+                countryProviders.rent?.let { 
+                    logger.info("Found ${it.size} rent providers for movie ID: $movieId")
+                    allProviders.addAll(it) 
+                }
+                countryProviders.buy?.let { 
+                    logger.info("Found ${it.size} buy providers for movie ID: $movieId")
+                    allProviders.addAll(it) 
+                }
+
+                if (allProviders.isEmpty()) {
+                    logger.warn("No streaming providers found in any category for movie ID: $movieId")
+                    return@map emptyList<StreamingService>()
+                }
 
                 // Convert to StreamingService objects and remove duplicates
-                allProviders.distinctBy { it.providerId }
+                val streamingServices = allProviders.distinctBy { it.providerId }
                     .map { provider ->
                         StreamingService(
                             providerId = provider.providerId,
@@ -359,8 +382,14 @@ class TmdbApiService(
                             logoPath = provider.logoPath
                         )
                     }
+
+                logger.info("Returning ${streamingServices.size} streaming services for movie ID: $movieId")
+                streamingServices
             }
-            .onErrorReturn(emptyList())
+            .onErrorResume { error ->
+                logger.error("Error fetching streaming providers for movie ID: $movieId", error)
+                Mono.just(emptyList())
+            }
     }
 
     /**
@@ -405,6 +434,16 @@ class TmdbApiService(
                         movieDto.genreIds.mapNotNull { genreId ->
                             genres.find { it.id == genreId }
                         }
+                    }
+
+                    logger.info("Creating Movie object for ID: ${movieDto.id}, title: ${movieDto.title}")
+                    logger.info("  - voteAverage: ${movieDto.voteAverage}")
+                    logger.info("  - posterPath: ${movieDto.posterPath}")
+                    logger.info("  - director: $director")
+                    logger.info("  - streamingServices: ${streamingServices.size} services")
+
+                    if (streamingServices.isNotEmpty()) {
+                        logger.info("  - First streaming service: ${streamingServices[0].providerName}")
                     }
 
                     // Convert DTO to domain model
