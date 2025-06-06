@@ -29,28 +29,35 @@ const Container = styled.div`
   background-image: url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
   padding: 25px;
   border-radius: 15px;
-  margin-bottom: 30px;
   box-shadow: 
     0 10px 25px rgba(0, 0, 0, 0.4),
     0 0 10px rgba(229, 9, 20, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.05);
   position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 
   &::before {
-    content: '🎟️';
+    content: '';
     position: absolute;
-    top: 15px;
-    right: 15px;
-    font-size: 1.5rem;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #e50914, #f5b50c, #e50914);
+    background-size: 200% 100%;
+    border-radius: 15px 15px 0 0;
   }
 `;
 
 const Title = styled.h2`
   color: #f5b50c;
   margin-top: 0;
-  margin-bottom: 25px;
-  font-size: 1.8rem;
-  font-family: 'Bebas Neue', cursive;
+  margin-bottom: 20px;
+  font-size: 1.6rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
   letter-spacing: 1px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   position: relative;
@@ -68,13 +75,9 @@ const Title = styled.h2`
 `;
 
 const Form = styled.form`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 25px;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 `;
 
 const FormGroup = styled.div`
@@ -82,23 +85,26 @@ const FormGroup = styled.div`
   flex-direction: column;
   position: relative;
 
-  &::before {
-    position: absolute;
-    left: 0;
-    top: 0;
-    font-size: 1.2rem;
-  }
-
   &:nth-child(1)::before {
-    content: '🎭';
-    top: -2px;
-    left: -25px;
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 10px;
+    width: 8px;
+    height: 8px;
+    background-color: #f5b50c;
+    border-radius: 50%;
   }
 
   &:nth-child(2)::before {
-    content: '🎬';
-    top: -2px;
-    left: -25px;
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 10px;
+    width: 8px;
+    height: 8px;
+    background-color: #e50914;
+    border-radius: 50%;
   }
 `;
 
@@ -153,26 +159,28 @@ const Input = styled.input`
 `;
 
 const Button = styled.button<{ isSpinning: boolean }>`
-  grid-column: 1 / -1;
-  padding: 18px;
+  padding: 16px;
   border-radius: 10px;
   border: none;
   background: ${props => props.isSpinning ? 
     '#555' : 
     'linear-gradient(45deg, #e50914, #ff3b30)'};
   color: white;
-  font-size: 1.4rem;
-  font-weight: bold;
-  font-family: 'Bebas Neue', cursive;
+  font-size: 1.2rem;
+  font-weight: 600;
+  font-family: 'Roboto', sans-serif;
   letter-spacing: 1px;
   cursor: ${props => props.isSpinning ? 'not-allowed' : 'pointer'};
   transition: all 0.3s ease;
-  margin-top: 20px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   animation: ${props => props.isSpinning ? 'none' : pulse} 2s infinite;
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
 
   &:hover {
     background: ${props => props.isSpinning ? 
@@ -190,13 +198,19 @@ const Button = styled.button<{ isSpinning: boolean }>`
   }
 
   &::before {
-    content: '🎬';
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
     margin-right: 10px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transition: all 0.3s ease;
   }
 
-  &::after {
-    content: '🍿';
-    margin-left: 10px;
+  &:hover::before {
+    transform: scale(1.2);
+    background-color: rgba(255, 255, 255, 0.3);
   }
 `;
 

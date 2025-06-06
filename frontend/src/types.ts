@@ -1,10 +1,10 @@
 export interface Movie {
   id: number;
   title: string;
-  releaseDate: string | null;
-  voteAverage: number;
+  release_date: string | null;
+  vote_average: number | null;
   genres: Genre[];
-  posterPath: string | null;
+  poster_path: string | null;
   overview: string | null;
   director: string | null;
   year: number;
@@ -13,9 +13,9 @@ export interface Movie {
 }
 
 export interface StreamingService {
-  providerId: number;
-  providerName: string;
-  logoPath: string | null;
+  provider_id: number;
+  provider_name: string;
+  logo_path: string | null;
 }
 
 export interface Genre {

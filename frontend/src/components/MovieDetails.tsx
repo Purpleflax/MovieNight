@@ -39,6 +39,13 @@ const Container = styled.div`
   animation: ${fadeIn} 0.5s ease-out;
   border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
+  max-width: 100%;
+  margin-bottom: 20px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    max-height: 500px;
+  }
 
   &::before {
     content: '';
@@ -57,8 +64,15 @@ const PosterContainer = styled.div`
   position: relative;
   width: 100%;
   height: 0;
-  padding-top: 150%; /* 2:3 aspect ratio for movie posters */
+  padding-top: 120%; /* Slightly shorter aspect ratio */
   overflow: hidden;
+
+  @media (min-width: 768px) {
+    width: 300px;
+    min-width: 300px;
+    height: 100%;
+    padding-top: 0;
+  }
 
   &::after {
     content: '';
@@ -66,7 +80,7 @@ const PosterContainer = styled.div`
     bottom: 0;
     left: 0;
     right: 0;
-    height: 100px;
+    height: 80px;
     background: linear-gradient(to top, rgba(26, 26, 26, 1), transparent);
     z-index: 1;
   }
@@ -80,6 +94,13 @@ const Poster = styled.img`
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
+
+  @media (min-width: 768px) {
+    position: static;
+    display: block;
+    height: 100%;
+    object-fit: contain;
+  }
 
   &:hover {
     transform: scale(1.05);
@@ -103,43 +124,107 @@ const NoPoster = styled.div`
   padding: 20px;
 
   &::before {
-    content: '🎬';
-    font-size: 3rem;
-    margin-bottom: 15px;
+    content: '';
+    display: block;
+    width: 60px;
+    height: 40px;
+    margin: 0 auto 15px;
+    background: linear-gradient(135deg, #2c2c2c, #444);
+    border: 2px solid #aaa;
+    border-radius: 5px;
+    position: relative;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    border: 2px solid #aaa;
+    border-radius: 50%;
   }
 `;
 
 const Details = styled.div`
-  padding: 25px;
+  padding: 20px;
   position: relative;
   background: linear-gradient(to bottom, #1a1a1a, #0a0a0a);
 
-  &::before {
-    content: '🍿';
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    font-size: 1.5rem;
+  @media (min-width: 768px) {
+    flex: 1;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    align-items: start;
+    max-height: 500px;
   }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 15px;
+    height: 15px;
+    background: linear-gradient(135deg, #e50914, #f5b50c);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(229, 9, 20, 0.5);
+  }
+
+  /* Scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(229, 9, 20, 0.5);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(229, 9, 20, 0.7);
+  }
+`;
+
+const TitleSection = styled.div`
+  grid-column: 1 / -1;
+  margin-bottom: 15px;
 `;
 
 const Title = styled.h2`
   margin-top: 0;
   margin-bottom: 10px;
   color: #fff;
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-family: 'Roboto', sans-serif;
   font-weight: 700;
   letter-spacing: 1px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 `;
 
+const MetaInfo = styled.div`
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+`;
+
 const Year = styled.div`
   color: #f5b50c;
-  font-size: 1.3rem;
-  margin-bottom: 15px;
+  font-size: 1.1rem;
   font-weight: bold;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   padding: 3px 10px;
   background-color: rgba(0, 0, 0, 0.3);
   border-radius: 5px;
@@ -147,15 +232,22 @@ const Year = styled.div`
 
 const Rating = styled.div`
   color: #f5b50c;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: bold;
-  margin-bottom: 20px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  padding: 3px 10px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
 
   &::before {
-    content: '⭐';
+    content: '';
+    display: inline-block;
+    width: 14px;
+    height: 14px;
     margin-right: 8px;
+    background: linear-gradient(135deg, #f5b50c, #ffd700);
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
   }
 `;
 
@@ -233,12 +325,18 @@ const StreamingLogo = styled.img`
 const MovieDetails: React.FC<MovieDetailsProps> = ({ movie }) => {
   const imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
 
+  // Debug logging
+  console.log('MovieDetails - movie:', movie);
+  console.log('MovieDetails - poster_path:', movie.poster_path);
+  console.log('MovieDetails - vote_average:', movie.vote_average);
+  console.log('MovieDetails - streamingServices:', movie.streamingServices);
+
   return (
     <Container>
       <PosterContainer>
-        {movie.posterPath ? (
+        {movie.poster_path ? (
           <Poster 
-            src={`${imageBaseUrl}${movie.posterPath}`} 
+            src={`${imageBaseUrl}${movie.poster_path}`} 
             alt={`${movie.title} poster`} 
           />
         ) : (
@@ -247,9 +345,13 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie }) => {
       </PosterContainer>
 
       <Details>
-        <Title>{movie.title}</Title>
-        <Year>{movie.year}</Year>
-        <Rating>{movie.voteAverage !== undefined ? movie.voteAverage.toFixed(1) : 'N/A'}</Rating>
+        <TitleSection>
+          <Title>{movie.title}</Title>
+          <MetaInfo>
+            <Year>{movie.year}</Year>
+            <Rating>{movie.vote_average != null ? movie.vote_average.toFixed(1) : 'N/A'}</Rating>
+          </MetaInfo>
+        </TitleSection>
 
         <InfoItem>
           <strong>Genre:</strong> {movie.primaryGenre}
@@ -266,15 +368,15 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie }) => {
             <strong>Available on:</strong>
             <StreamingServicesList>
               {movie.streamingServices.map(service => (
-                <StreamingServiceItem key={service.providerId}>
-                  {service.logoPath ? (
+                <StreamingServiceItem key={service.provider_id}>
+                  {service.logo_path ? (
                     <StreamingLogo 
-                      src={`https://image.tmdb.org/t/p/original${service.logoPath}`} 
-                      alt={service.providerName} 
-                      title={service.providerName}
+                      src={`https://image.tmdb.org/t/p/original${service.logo_path}`} 
+                      alt={service.provider_name} 
+                      title={service.provider_name}
                     />
                   ) : (
-                    service.providerName
+                    service.provider_name
                   )}
                 </StreamingServiceItem>
               ))}
@@ -283,12 +385,10 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie }) => {
         )}
 
         {movie.overview && (
-          <>
-            <InfoItem>
-              <strong>Overview:</strong>
-            </InfoItem>
+          <InfoItem style={{ gridColumn: '1 / -1' }}>
+            <strong>Overview:</strong>
             <Overview>{movie.overview}</Overview>
-          </>
+          </InfoItem>
         )}
       </Details>
     </Container>

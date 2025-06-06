@@ -20,21 +20,36 @@ const bounce = keyframes`
 
 // Import Google Fonts
 const GlobalStyle = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@300;400;500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 
   body {
     margin: 0;
     padding: 0;
     background-color: #0a0a0a;
     background-image: 
-      radial-gradient(circle at 10% 20%, rgba(229, 9, 20, 0.08) 0%, transparent 25%),
-      radial-gradient(circle at 90% 80%, rgba(245, 181, 12, 0.08) 0%, transparent 25%),
-      linear-gradient(to bottom, #0a0a0a, #1a1a1a);
+      linear-gradient(135deg, rgba(20, 20, 20, 0.9) 0%, rgba(10, 10, 10, 0.95) 100%),
+      url('https://www.transparenttextures.com/patterns/dark-leather.png');
     background-attachment: fixed;
     color: #fff;
     font-family: 'Roboto', sans-serif;
     line-height: 1.6;
     font-weight: 400;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      linear-gradient(to right, rgba(229, 9, 20, 0.03) 0%, transparent 100%),
+      linear-gradient(to bottom, rgba(245, 181, 12, 0.03) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: -1;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -50,10 +65,13 @@ const GlobalStyle = createGlobalStyle`
 const AppContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 30px;
   color: #fff;
   min-height: 100vh;
   position: relative;
+  background-color: rgba(15, 15, 15, 0.7);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
 
   &::before {
     content: '';
@@ -61,10 +79,23 @@ const AppContainer = styled.div`
     top: 0;
     left: 0;
     right: 0;
-    height: 200px;
+    height: 100%;
     background-image: url('https://www.transparenttextures.com/patterns/film-grain.png');
-    opacity: 0.1;
+    opacity: 0.05;
     z-index: -1;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: linear-gradient(to top, rgba(10, 10, 10, 0.3), transparent);
+    z-index: -1;
+    pointer-events: none;
   }
 `;
 
@@ -108,18 +139,21 @@ const Title = styled.h1`
   background-clip: text;
 
   &::before {
-    content: '🎬';
+    content: '';
+    display: inline-block;
+    width: 40px;
+    height: 40px;
     margin-right: 20px;
-    font-size: 3rem;
+    background: linear-gradient(135deg, #e50914, #f5b50c);
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 70%, 0% 100%);
     filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+    vertical-align: middle;
   }
 `;
 
 const MainContent = styled.main`
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 40px;
-  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
   position: relative;
 
   &::before {
@@ -134,9 +168,46 @@ const MainContent = styled.main`
     pointer-events: none;
     z-index: -1;
   }
+`;
 
-  @media (max-width: 768px) {
+const ContentLayout = styled.div`
+  display: grid;
+  grid-template-columns: minmax(300px, 1fr) 2fr;
+  gap: 30px;
+  margin-top: 30px;
+
+  @media (max-width: 1024px) {
     grid-template-columns: 1fr;
+  }
+`;
+
+const Sidebar = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const MovieDetailsContainer = styled.div`
+  margin-top: 30px;
+  max-height: 80vh;
+  overflow-y: auto;
+
+  /* Scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(229, 9, 20, 0.5);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(229, 9, 20, 0.7);
   }
 `;
 
@@ -182,6 +253,10 @@ const App: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       const response = await axios.get<Movie>('/api/movies/random', { params });
+      console.log('App - response.data:', response.data);
+      console.log('App - poster_path:', response.data.poster_path);
+      console.log('App - vote_average:', response.data.vote_average);
+      console.log('App - streamingServices:', response.data.streamingServices);
       setSelectedMovie(response.data);
     } catch (err) {
       setError('No movies found with the selected criteria. Try different filters.');
@@ -199,26 +274,34 @@ const App: React.FC = () => {
           <Title>Movie Night Wheel</Title>
         </Header>
 
-        <FilterControls 
-          genres={genres}
-          selectedGenre={selectedGenre}
-          onGenreChange={setSelectedGenre}
-          directorName={directorName}
-          onDirectorChange={setDirectorName}
-          onSpin={handleSpin}
-          isSpinning={isSpinning}
-        />
-
         <MainContent>
-          <MovieWheel 
-            isSpinning={isSpinning} 
-            selectedMovie={selectedMovie}
-            error={error}
-          />
+          <ContentLayout>
+            <Sidebar>
+              <FilterControls 
+                genres={genres}
+                selectedGenre={selectedGenre}
+                onGenreChange={setSelectedGenre}
+                directorName={directorName}
+                onDirectorChange={setDirectorName}
+                onSpin={handleSpin}
+                isSpinning={isSpinning}
+              />
+            </Sidebar>
 
-          {selectedMovie && (
-            <MovieDetails movie={selectedMovie} />
-          )}
+            <div>
+              <MovieWheel 
+                isSpinning={isSpinning} 
+                selectedMovie={selectedMovie}
+                error={error}
+              />
+
+              {selectedMovie && (
+                <MovieDetailsContainer>
+                  <MovieDetails movie={selectedMovie} />
+                </MovieDetailsContainer>
+              )}
+            </div>
+          </ContentLayout>
         </MainContent>
       </AppContainer>
     </>

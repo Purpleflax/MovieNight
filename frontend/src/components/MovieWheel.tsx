@@ -21,32 +21,62 @@ const spinFast = keyframes`
   0% {
     transform: rotate(0deg) scale(1);
   }
+  5% {
+    transform: rotate(18deg) scale(1.005);
+  }
   10% {
     transform: rotate(36deg) scale(1.01);
+  }
+  15% {
+    transform: rotate(54deg) scale(1.015);
   }
   20% {
     transform: rotate(72deg) scale(1.02);
   }
+  25% {
+    transform: rotate(90deg) scale(1.025);
+  }
   30% {
     transform: rotate(108deg) scale(1.03);
+  }
+  35% {
+    transform: rotate(126deg) scale(1.035);
   }
   40% {
     transform: rotate(144deg) scale(1.04);
   }
+  45% {
+    transform: rotate(162deg) scale(1.045);
+  }
   50% {
     transform: rotate(180deg) scale(1.05);
+  }
+  55% {
+    transform: rotate(198deg) scale(1.045);
   }
   60% {
     transform: rotate(216deg) scale(1.04);
   }
+  65% {
+    transform: rotate(234deg) scale(1.035);
+  }
   70% {
     transform: rotate(252deg) scale(1.03);
+  }
+  75% {
+    transform: rotate(270deg) scale(1.025);
   }
   80% {
     transform: rotate(288deg) scale(1.02);
   }
+  85% {
+    transform: rotate(306deg) scale(1.015);
+  }
   90% {
     transform: rotate(324deg) scale(1.01);
+  }
+  95% {
+    transform: rotate(342deg) scale(1.005);
   }
   100% {
     transform: rotate(360deg) scale(1);
@@ -91,19 +121,19 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px;
+  padding: 30px;
   background-color: #1a1a1a;
   background-image: url('https://www.transparenttextures.com/patterns/movie-film.png');
   border-radius: 20px;
   box-shadow: 
     0 15px 35px rgba(0, 0, 0, 0.6),
     0 0 15px rgba(229, 9, 20, 0.3);
-  min-height: 500px;
   position: relative;
   overflow: hidden;
   border: 2px solid rgba(229, 9, 20, 0.3);
-  transform: scale(1.05);
   z-index: 10;
+  height: auto;
+  margin-bottom: 30px;
 
   &::before {
     content: '';
@@ -172,8 +202,8 @@ const Wheel = styled.div<{ isSpinning: boolean }>`
   margin-bottom: 25px;
   animation: 
     ${props => props.isSpinning ? spinFast : spin} 
-    ${props => props.isSpinning ? '0.8s' : '15s'} 
-    ${props => props.isSpinning ? 'cubic-bezier(0.1, 0.7, 0.1, 1) infinite' : 'ease-in-out infinite'}, 
+    ${props => props.isSpinning ? '1.5s' : '15s'} 
+    ${props => props.isSpinning ? 'cubic-bezier(0.25, 0.1, 0.25, 1) infinite' : 'ease-in-out infinite'}, 
     ${props => props.isSpinning ? glow : 'none'} 3s ease-in-out infinite;
   box-shadow: 
     0 0 30px rgba(229, 9, 20, 0.5),
@@ -223,10 +253,13 @@ const InnerCircle = styled.div`
   text-shadow: 0 0 10px rgba(229, 9, 20, 0.7);
 
   &::after {
-    content: '🎥';
+    content: '';
     position: absolute;
     bottom: -8px;
-    font-size: 1.5rem;
+    width: 30px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(229, 9, 20, 0.7), transparent);
+    border-radius: 3px;
     filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
   }
 `;
@@ -285,13 +318,13 @@ const MovieWheel: React.FC<MovieWheelProps> = ({ isSpinning, selectedMovie, erro
 
       {!isSpinning && selectedMovie && !error && (
         <Message>
-          🎉 Selected: {selectedMovie.title} 🎉
+          Selected: {selectedMovie.title}
         </Message>
       )}
 
       {!isSpinning && !selectedMovie && !error && (
         <Message>
-          🎬 Click "Spin" to find a random movie! 🍿
+          Click "Spin" to find a random movie!
         </Message>
       )}
     </Container>
