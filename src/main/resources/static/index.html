@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Site - JunieTest</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        .header {
+            background-color: #1a1a1a;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #e50914;
+            font-weight: 700;
+            letter-spacing: 1px;
+            font-size: 2rem;
+            text-transform: uppercase;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .movie-card {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .movie-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: 330px;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
+        }
+
+        .movie-card:hover .movie-poster {
+            opacity: 0.8;
+        }
+
+        .movie-info {
+            padding: 18px;
+            border-top: 2px solid rgba(229, 9, 20, 0.5);
+        }
+
+        .movie-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin: 0 0 10px 0;
+            color: #ffffff;
+            line-height: 1.4;
+        }
+
+        .movie-year {
+            color: #b3b3b3;
+            font-size: 14px;
+            font-weight: 300;
+        }
+
+        .movie-rating {
+            color: #ffd700;
+            font-weight: 500;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .movie-rating::before {
+            content: "★";
+            margin-right: 5px;
+        }
+
+        .search-bar {
+            margin: 25px 0;
+            display: flex;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 14px 18px;
+            border: none;
+            background-color: #2a2a2a;
+            color: #fff;
+            font-size: 16px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        .search-input:focus {
+            outline: none;
+            background-color: #333;
+        }
+
+        .search-button {
+            background-color: #e50914;
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .search-button:hover {
+            background-color: #f40612;
+        }
+
+        .categories {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            scrollbar-width: thin;
+            scrollbar-color: #e50914 #333;
+        }
+
+        .categories::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .categories::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 10px;
+        }
+
+        .categories::-webkit-scrollbar-thumb {
+            background-color: #e50914;
+            border-radius: 10px;
+        }
+
+        .category {
+            background-color: #2a2a2a;
+            padding: 10px 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            font-weight: 400;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .category:hover {
+            background-color: #3a3a3a;
+        }
+
+        .category.active {
+            background-color: #e50914;
+            font-weight: 500;
+            box-shadow: 0 4px 8px rgba(229, 9, 20, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>MovieFlix</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search for movies...">
+            <button class="search-button">Search</button>
+        </div>
+
+        <div class="categories">
+            <div class="category active">All</div>
+            <div class="category">Action</div>
+            <div class="category">Comedy</div>
+            <div class="category">Drama</div>
+            <div class="category">Sci-Fi</div>
+            <div class="category">Horror</div>
+            <div class="category">Romance</div>
+            <div class="category">Documentary</div>
+        </div>
+
+        <div class="movie-grid" id="movieGrid">
+            <!-- Movies will be added here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Sample movie data
+        const movies = [
+            {
+                title: "The Shawshank Redemption",
+                year: 1994,
+                rating: 9.3,
+                poster: "https://via.placeholder.com/200x300.png?text=Shawshank+Redemption",
+                category: "Drama"
+            },
+            {
+                title: "The Godfather",
+                year: 1972,
+                rating: 9.2,
+                poster: "https://via.placeholder.com/200x300.png?text=The+Godfather",
+                category: "Drama"
+            },
+            {
+                title: "The Dark Knight",
+                year: 2008,
+                rating: 9.0,
+                poster: "https://via.placeholder.com/200x300.png?text=Dark+Knight",
+                category: "Action"
+            },
+            {
+                title: "Pulp Fiction",
+                year: 1994,
+                rating: 8.9,
+                poster: "https://via.placeholder.com/200x300.png?text=Pulp+Fiction",
+                category: "Crime"
+            },
+            {
+                title: "Fight Club",
+                year: 1999,
+                rating: 8.8,
+                poster: "https://via.placeholder.com/200x300.png?text=Fight+Club",
+                category: "Drama"
+            },
+            {
+                title: "Inception",
+                year: 2010,
+                rating: 8.8,
+                poster: "https://via.placeholder.com/200x300.png?text=Inception",
+                category: "Sci-Fi"
+            },
+            {
+                title: "The Matrix",
+                year: 1999,
+                rating: 8.7,
+                poster: "https://via.placeholder.com/200x300.png?text=The+Matrix",
+                category: "Sci-Fi"
+            },
+            {
+                title: "Goodfellas",
+                year: 1990,
+                rating: 8.7,
+                poster: "https://via.placeholder.com/200x300.png?text=Goodfellas",
+                category: "Crime"
+            },
+            {
+                title: "The Silence of the Lambs",
+                year: 1991,
+                rating: 8.6,
+                poster: "https://via.placeholder.com/200x300.png?text=Silence+of+the+Lambs",
+                category: "Thriller"
+            },
+            {
+                title: "Interstellar",
+                year: 2014,
+                rating: 8.6,
+                poster: "https://via.placeholder.com/200x300.png?text=Interstellar",
+                category: "Sci-Fi"
+            },
+            {
+                title: "The Lion King",
+                year: 1994,
+                rating: 8.5,
+                poster: "https://via.placeholder.com/200x300.png?text=Lion+King",
+                category: "Animation"
+            },
+            {
+                title: "Forrest Gump",
+                year: 1994,
+                rating: 8.8,
+                poster: "https://via.placeholder.com/200x300.png?text=Forrest+Gump",
+                category: "Drama"
+            }
+        ];
+
+        // Function to display movies
+        function displayMovies(movieList) {
+            const movieGrid = document.getElementById('movieGrid');
+            movieGrid.innerHTML = '';
+
+            movieList.forEach(movie => {
+                const movieCard = document.createElement('div');
+                movieCard.className = 'movie-card';
+
+                movieCard.innerHTML = `
+                    <img src="${movie.poster}" alt="${movie.title}" class="movie-poster">
+                    <div class="movie-info">
+                        <h3 class="movie-title">${movie.title}</h3>
+                        <div class="movie-year">${movie.year}</div>
+                        <div class="movie-rating">★ ${movie.rating}</div>
+                    </div>
+                `;
+
+                movieGrid.appendChild(movieCard);
+            });
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            displayMovies(movies);
+
+            // Add event listeners for category filtering
+            const categories = document.querySelectorAll('.category');
+            categories.forEach(category => {
+                category.addEventListener('click', () => {
+                    // Remove active class from all categories
+                    categories.forEach(c => c.classList.remove('active'));
+                    // Add active class to clicked category
+                    category.classList.add('active');
+
+                    const categoryName = category.textContent;
+                    if (categoryName === 'All') {
+                        displayMovies(movies);
+                    } else {
+                        const filteredMovies = movies.filter(movie => movie.category === categoryName);
+                        displayMovies(filteredMovies);
+                    }
+                });
+            });
+
+            // Add event listener for search
+            const searchButton = document.querySelector('.search-button');
+            const searchInput = document.querySelector('.search-input');
+
+            searchButton.addEventListener('click', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                if (searchTerm) {
+                    const filteredMovies = movies.filter(movie => 
+                        movie.title.toLowerCase().includes(searchTerm)
+                    );
+                    displayMovies(filteredMovies);
+                } else {
+                    displayMovies(movies);
+                }
+            });
+
+            // Allow search on Enter key
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    searchButton.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

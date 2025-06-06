@@ -1,0 +1,90 @@
+# === General ===
+*.iml
+.idea/
+*.log
+*.tmp
+*.swp
+*.bak
+*.orig
+*.rej
+.DS_Store
+Thumbs.db
+.vscode/
+
+# === OS Generated ===
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# === Kotlin / Java ===
+*.class
+*.jar
+*.war
+*.ear
+
+# === Gradle ===
+.gradle/
+build/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+.gradle-cache/
+gradle-app.setting
+
+# === Spring Boot ===
+/target/
+*.log
+*.db
+*.h2.db
+*.mv.db
+
+# === Environment Files ===
+.env
+.env.*
+
+# === IntelliJ IDEA ===
+*.ipr
+*.iws
+*.idea/
+
+# === React (frontend) ===
+node_modules/
+dist/
+build/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.pnp/
+.pnp.js
+.eslintcache
+
+# === React coverage ===
+coverage/
+
+# === JetBrains Rider ===
+.idea/
+.idea/*
+
+# === MacOS files ===
+*.DS_Store
+
+# === Linux ===
+*~
+
+# === Logs ===
+logs/
+*.log
+*.gz
+log/
+
+# === Test Reports ===
+test-output/
+cobertura.ser
+*.lcov
+
+# === Temporary Files ===
+*.tmp
+*.bak
+
+# === Local Configuration ===
+local.properties
